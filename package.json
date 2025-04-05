@@ -1,0 +1,15 @@
+{
+  "name": "meu-bot",
+  "version": "1.0.0",
+  "description": "Tokenhunter bot with wallet connector and real-time token trading",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "fs": "0.0.1-security",
+    "@solana/web3.js": "^1.30.0"
+  }
+}

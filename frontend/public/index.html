@@ -297,7 +297,7 @@
   <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
   <script src="https://unpkg.com/@phantom/phantom-wallet-web3-lib/dist/phantom.min.js"></script>
   <script>
-    const socket = io();
+    const socket = io(process.env.REACT_APP_SERVER_URL);
     const importWalletModal = new bootstrap.Modal('#importWalletModal');
     let walletPublicKey = null;
     let userPublicKey = null;

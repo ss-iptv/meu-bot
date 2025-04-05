@@ -1,25 +1,15 @@
 {
-  "name": "solana-sniper-bot",
+  "name": "meu-bot",
   "version": "1.0.0",
-  "private": true,
+  "description": "Tokenhunter bot with wallet connector and real-time token trading",
+  "main": "index.js",
   "scripts": {
-    "install:all": "npm install && cd frontend && npm install",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
-    "start:backend": "node index.js",
-    "start:frontend": "cd frontend && npm start"
+    "start": "node index.js"
   },
   "dependencies": {
-    "@solana/spl-token": "^0.1.8",
-    "@solana/web3.js": "^1.31.0",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "http": "0.0.1-security",
-    "socket.io": "^4.0.0"
-  },
-  "devDependencies": {
-    "concurrently": "^6.0.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
+    "body-parser": "^1.19.0",
+    "fs": "0.0.1-security",
+    "@solana/web3.js": "^1.30.0"
   }
 }

@@ -1,17 +1,3 @@
-Clone o Repositório
+# Installation Instructions
 
-bash
-git clone https://github.com/USERNAME/REPO_NAME.git
-cd REPO_NAME
-Instalar Dependências do Backend e Frontend
-
-bash
-npm run install:all
-Iniciar o Backend e Frontend
-
-bash
-npm start
-Acessar a Aplicação Abra o navegador e acesse:
-
-Code
-http://localhost:3000
+1. Install dependencies:

@@ -5,6 +5,7 @@ const { Connection, PublicKey } = require('@solana/web3.js');
 const { getAssociatedTokenAddressSync } = require('@solana/spl-token');
 const fs = require('fs');
 require('dotenv').config();
+const connectDB = require('./db');
 
 const app = express();
 const server = http.createServer(app);
@@ -13,7 +14,17 @@ const io = socketIO(server);
 const PORT = process.env.PORT || 4000;
 const solanaConnection = new Connection(process.env.RPC_ENDPOINT);
 
+// Connect to MongoDB
+connectDB();
+
 app.use(express.json());
+
+// Serve the frontend application
+app.use(express.static('frontend/build'));
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/frontend/build/index.html');
+});
 
 io.on('connection', (socket) => {
     console.log(`User: ${socket.id} connected`);

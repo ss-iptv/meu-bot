@@ -1,57 +1,17 @@
-1. Clone o Repositório
-Primeiro, você precisa clonar o repositório que contém o código do bot sniper:
+Clone o Repositório
 
 bash
 git clone https://github.com/USERNAME/REPO_NAME.git
 cd REPO_NAME
-2. Instale as Dependências
-Instale todas as dependências necessárias para o backend e o frontend:
-
-Backend
-Navegue até a pasta do backend e instale as dependências:
+Instalar Dependências do Backend e Frontend
 
 bash
-cd backend
-npm install
-Frontend
-Navegue até a pasta do frontend e instale as dependências:
+npm run install:all
+Iniciar o Backend e Frontend
 
 bash
-cd ../frontend
-npm install
-3. Configure as Variáveis de Ambiente
-Crie um arquivo .env tanto para o backend quanto para o frontend com as configurações necessárias.
-
-Backend
-Crie um arquivo .env na pasta do backend e adicione as seguintes variáveis:
-
-env
-RPC_ENDPOINT=https://api.mainnet-beta.solana.com
-WEBSOCKET_ENDPOINT=wss://api.mainnet-beta.solana.com
-MONGO_URL=mongodb://localhost:27017/sniper-bot
-LOG_LEVEL=info
-Frontend
-Crie um arquivo .env na pasta do frontend e adicione as seguintes variáveis:
-
-env
-VITE_SERVER_URL=http://localhost:4000
-VITE_RPC_URL=https://api.mainnet-beta.solana.com
-VITE_DEV_RPC_URL=https://api.devnet.solana.com
-4. Inicie o Backend
-Navegue para a pasta do backend e inicie o servidor:
-
-bash
-cd backend
 npm start
-5. Inicie o Frontend
-Navegue para a pasta do frontend e inicie a aplicação React:
-
-bash
-cd ../frontend
-npm start
-Acesso à Aplicação
-Depois de iniciar ambos, você pode acessar o frontend da aplicação no navegador através do endereço:
+Acessar a Aplicação Abra o navegador e acesse:
 
 Code
 http://localhost:3000
-Isso deve configurar e iniciar o bot sniper para Solana. Certifique-se de ter o Node.js e o MongoDB instalados no seu sistema antes de iniciar o processo. Se você encontrar algum problema, consulte a documentação ou verifique os logs para depuração.

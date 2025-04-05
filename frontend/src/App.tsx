@@ -1,21 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_SERVER_URL);
+interface Data {
+  pubKey?: string;
+  balance?: number;
+  wsolBalance?: number;
+  autoSell?: boolean;
+  pools?: { name: string }[];
+}
 
-const App = () => {
-  const [data, setData] = useState(null);
+const socket = io(process.env.REACT_APP_SERVER_URL as string);
+
+const App: React.FC = () => {
+  const [data, setData] = useState<Data | null>(null);
 
   useEffect(() => {
-    socket.on('process', (data) => {
+    socket.on('process', (data: Data) => {
       setData(data);
     });
   }, []);
 
   const handleAutoSellChange = () => {
-    const newAutoSell = !data.autoSell;
-    setData({ ...data, autoSell: newAutoSell });
-    socket.emit('autoSell', newAutoSell);
+    if (data) {
+      const newAutoSell = !data.autoSell;
+      setData({ ...data, autoSell: newAutoSell });
+      socket.emit('autoSell', newAutoSell);
+    }
   };
 
   return (

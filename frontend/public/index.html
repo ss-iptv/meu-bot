@@ -1,11 +1,375 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Sniper Bot</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solana Sniper Bot</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    body { padding: 20px; background-color: #f8f9fa; }
+    .tab-content { background-color: white; padding: 20px; border: 1px solid #dee2e6; border-top: none; }
+    .log-console { height: 300px; overflow-y: auto; background-color: #212529; color: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; }
+    .profit { color: #28a745; }
+    .loss { color: #dc3545; }
+    .order-table { max-height: 500px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">Solana Sniper Bot</h1>
+    
+    <ul class="nav nav-tabs" id="botTabs">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#wallet">Carteira</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#trading">Trading</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#hunter">Token Hunter</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#sniper">Sniper</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#settings">Configurações</button></li>
+    </ul>
+    
+    <div class="tab-content">
+      <!-- Aba Carteira -->
+      <div class="tab-pane fade show active" id="wallet">
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Gerenciamento de Carteira</div>
+              <div class="card-body">
+                <div id="walletInfo">
+                  <p class="text-center" id="walletStatus">Nenhuma carteira carregada</p>
+                  <div class="d-grid gap-2">
+                    <button id="createWalletBtn" class="btn btn-primary">Criar Nova Carteira</button>
+                    <button id="importWalletBtn" class="btn btn-secondary">Importar Carteira</button>
+                    <button id="connectPhantomBtn" class="btn btn-info">Conectar ao Phantom</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Saldo</div>
+              <div class="card-body text-center">
+                <h3 id="walletBalance">0.0000 SOL</h3>
+                <button id="refreshBalanceBtn" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-repeat"></i> Atualizar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <div class="card">
+              <div class="card-header">Transferência</div>
+              <div class="card-body">
+                <form id="transferForm">
+                  <div class="mb-3">
+                    <label for="recipientAddress" class="form-label">Endereço Destino</label>
+                    <input type="text" class="form-control" id="recipientAddress" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="transferAmount" class="form-label">Quantidade (SOL)</label>
+                    <input type="number" class="form-control" id="transferAmount" step="0.0001" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Enviar SOL</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Aba Trading -->
+      <div class="tab-pane fade" id="trading">
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Nova Ordem</div>
+              <div class="card-body">
+                <form id="tradeForm">
+                  <div class="mb-3">
+                    <label for="tradeAction" class="form-label">Ação</label>
+                    <select class="form-select" id="tradeAction" required>
+                      <option value="buy">Comprar</option>
+                      <option value="sell">Vender</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="tradeToken" class="form-label">Token</label>
+                    <input type="text" class="form-control" id="tradeToken" placeholder="Endereço do token" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="tradeAmount" class="form-label">Quantidade (SOL)</label>
+                    <input type="number" class="form-control" id="tradeAmount" step="0.0001" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="orderType" class="form-label">Tipo de Ordem</label>
+                    <select class="form-select" id="orderType" required>
+                      <option value="market">Market</option>
+                      <option value="limit">Limit</option>
+                    </select>
+                  </div>
+                  <div class="mb-3" id="priceField" style="display: none;">
+                    <label for="limitPrice" class="form-label">Preço Limite (SOL)</label>
+                    <input type="number" class="form-control" id="limitPrice" step="0.00000001">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Enviar Ordem</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Ordens Ativas</div>
+              <div class="card-body">
+                <div class="table-responsive order-table">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr><th>ID</th><th>Ação</th><th>Token</th><th>Quantidade</th><th>Tipo</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="ordersTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Aba Token Hunter -->
+      <div class="tab-pane fade" id="hunter">
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Configuração do Token Hunter</span>
+                <span id="hunterStatusBadge" class="badge bg-secondary">Inativo</span>
+              </div>
+              <div class="card-body">
+                <form id="hunterConfigForm">
+                  <div class="mb-3">
+                    <label for="liquidityThreshold" class="form-label">Liquidez Mínima (SOL)</label>
+                    <input type="number" class="form-control" id="liquidityThreshold" value="500" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="scanInterval" class="form-label">Intervalo de Scan (segundos)</label>
+                    <input type="number" class="form-control" id="scanInterval" value="120" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="maxQuickFlip" class="form-label">Máx. Quick Flips</label>
+                    <input type="number" class="form-control" id="maxQuickFlip" value="3" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="maxLockedLiquidity" class="form-label">Máx. Liquidez Bloqueada</label>
+                    <input type="number" class="form-control" id="maxLockedLiquidity" value="2" required>
+                  </div>
+                  <div class="d-grid gap-2">
+                    <button type="button" id="startHunterBtn" class="btn btn-success">Iniciar Hunter</button>
+                    <button type="button" id="stopHunterBtn" class="btn btn-danger" disabled>Parar Hunter</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Operações Ativas</div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr><th>Token</th><th>Estratégia</th><th>Entrada</th><th>Atual</th><th>Alvo</th><th>Investido</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="hunterTradesTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Aba Sniper -->
+      <div class="tab-pane fade" id="sniper">
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Novo Sniper</div>
+              <div class="card-body">
+                <form id="sniperForm">
+                  <div class="mb-3">
+                    <label for="sniperToken" class="form-label">Token Address</label>
+                    <input type="text" class="form-control" id="sniperToken" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="sniperAmount" class="form-label">Quantidade (SOL)</label>
+                    <input type="number" class="form-control" id="sniperAmount" step="0.0001" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="sniperParams" class="form-label">Parâmetros (JSON)</label>
+                    <textarea class="form-control" id="sniperParams" rows="3"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Iniciar Sniper</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Snipers Ativos</div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr><th>Token</th><th>Quantidade</th><th>Status</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="snipersTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Aba Configurações -->
+      <div class="tab-pane fade" id="settings">
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Configurações de Rede e Modo</div>
+              <div class="card-body">
+                <form id="networkSettingsForm">
+                  <div class="mb-3">
+                    <label for="rpcUrl" class="form-label">RPC URL</label>
+                    <input type="text" class="form-control" id="rpcUrl" value="https://api.mainnet-beta.solana.com" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="modeSelect" class="form-label">Modo de Operação</label>
+                    <select class="form-select" id="modeSelect">
+                      <option value="simulation">Simulado</option>
+                      <option value="real">Real</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">Logs do Sistema</div>
+              <div class="card-body">
+                <div class="log-console" id="logConsole"></div>
+                <button id="clearLogsBtn" class="btn btn-sm btn-outline-danger mt-2">Limpar Logs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Importar Carteira -->
+  <div class="modal fade" id="importWalletModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Importar Carteira</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="importWalletForm">
+            <div class="mb-3">
+              <label for="privateKeyInput" class="form-label">Chave Privada (Base58)</label>
+              <input type="text" class="form-control" id="privateKeyInput" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="confirmImportBtn" class="btn btn-primary">Importar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  <script src="https://unpkg.com/@phantom/phantom-wallet-web3-lib/dist/phantom.min.js"></script>
+  <script>
+    const socket = io();
+    const importWalletModal = new bootstrap.Modal('#importWalletModal');
+    let walletPublicKey = null;
+    let userPublicKey = null;
+    let isExternalWallet = false;
+    let currentMode = 'simulation';
+
+    // Elementos da interface
+    const elements = {
+      walletStatus: document.getElementById('walletStatus'),
+      walletBalance: document.getElementById('walletBalance'),
+      createWalletBtn: document.getElementById('createWalletBtn'),
+      importWalletBtn: document.getElementById('importWalletBtn'),
+      connectPhantomBtn: document.getElementById('connectPhantomBtn'),
+      refreshBalanceBtn: document.getElementById('refreshBalanceBtn'),
+      transferForm: document.getElementById('transferForm'),
+      tradeForm: document.getElementById('tradeForm'),
+      orderType: document.getElementById('orderType'),
+      priceField: document.getElementById('priceField'),
+      ordersTable: document.getElementById('ordersTable'),
+      hunterConfigForm: document.getElementById('hunterConfigForm'),
+      startHunterBtn: document.getElementById('startHunterBtn'),
+      stopHunterBtn: document.getElementById('stopHunterBtn'),
+      hunterTradesTable: document.getElementById('hunterTradesTable'),
+      hunterStatusBadge: document.getElementById('hunterStatusBadge'),
+      sniperForm: document.getElementById('sniperForm'),
+      snipersTable: document.getElementById('snipersTable'),
+      logConsole: document.getElementById('logConsole'),
+      modeSelect: document.getElementById('modeSelect'),
+      networkSettingsForm: document.getElementById('networkSettingsForm')
+    };
+
+    // Event Listeners
+    elements.createWalletBtn.addEventListener('click', async () => {
+      const response = await fetch('/api/wallet/create', { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        walletPublicKey = result.publicKey;
+        updateWalletInfo();
+      }
+    });
+
+    elements.importWalletBtn.addEventListener('click', () => importWalletModal.show());
+
+    elements.connectPhantomBtn.addEventListener('click', async () => {
+      if (window.phantom) {
+        try {
+          await window.phantom.solana.connect();
+          userPublicKey = window.phantom.solana.publicKey.toString();
+          isExternalWallet = true;
+          await fetch('/api/wallet/connect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ publicKey: userPublicKey })
+          });
+          elements.walletStatus.textContent = `Phantom: ${userPublicKey}`;
+          alert('Conectado ao Phantom: ' + userPublicKey);
+        } catch (error) {
+          alert('Erro ao conectar ao Phantom: ' + error.message);
+        }
+      } else {
+        alert('Por favor, instale a extensão Phantom');
+      }
+    });
+
+    elements.refreshBalanceBtn.addEventListener('click', async () => {
+      const response = await fetch('/api/wallet/balance');
+      const { balance } = await response.json();
+      elements.walletBalance.textContent = `${balance.toFixed(4)} SOL`;
+    });
+
+    elements.transferForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const useUserWallet = isExternalWallet && currentMode === 'real';
+      const response = await fetch('/api/wallet/send',

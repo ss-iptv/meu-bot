@@ -6,7 +6,7 @@
     "install:all": "npm install && cd frontend && npm install",
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "start:backend": "node index.js",
-    "start:frontend": "cd frontend && cross-env NODE_OPTIONS=--openssl-legacy-provider npm start"
+    "start:frontend": "cd frontend && npm start"
   },
   "dependencies": {
     "@solana/spl-token": "^0.1.8",
@@ -17,7 +17,9 @@
     "socket.io": "^4.0.0"
   },
   "devDependencies": {
-    "concurrently": "^6.0.0",
-    "cross-env": "^7.0.3"
+    "concurrently": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

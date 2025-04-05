@@ -1,0 +1,15 @@
+{
+    "pubKey": "YourPublicKeyHere",
+    "arbitPubKey": "YourArbitragePublicKeyHere",
+    "autoSell": false,
+    "onceBuy": true,
+    "jitoMode": false,
+    "sellOptions": {},
+    "filterOptions": {},
+    "buyOptions": {},
+    "jitoFee": 0,
+    "running": false,
+    "autoBuy": false,
+    "arbitrage": false,
+    "arbitrageOptions": {}
+}
